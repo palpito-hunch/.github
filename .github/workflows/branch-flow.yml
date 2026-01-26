@@ -1,0 +1,74 @@
+name: Branch Flow
+
+on:
+  workflow_call:
+
+jobs:
+  check-branch-flow:
+    name: Validate Branch Flow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check allowed branch flow
+        run: |
+          SOURCE="${{ github.head_ref }}"
+          TARGET="${{ github.base_ref }}"
+
+          echo "Source branch: $SOURCE"
+          echo "Target branch: $TARGET"
+          echo ""
+
+          ALLOWED=false
+
+          # Define allowed flows
+          # develop -> uat
+          if [[ "$TARGET" == "uat" && "$SOURCE" == "develop" ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: develop -> uat"
+          fi
+
+          # uat -> main
+          if [[ "$TARGET" == "main" && "$SOURCE" == "uat" ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: uat -> main"
+          fi
+
+          # main -> develop (sync back)
+          if [[ "$TARGET" == "develop" && "$SOURCE" == "main" ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: main -> develop"
+          fi
+
+          # Feature branches -> develop
+          if [[ "$TARGET" == "develop" && "$SOURCE" == feature/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: feature/* -> develop"
+          fi
+
+          # Hotfix branches -> main (emergencies)
+          if [[ "$TARGET" == "main" && "$SOURCE" == hotfix/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: hotfix/* -> main"
+          fi
+
+          # Hotfix branches -> uat (testing hotfix)
+          if [[ "$TARGET" == "uat" && "$SOURCE" == hotfix/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: hotfix/* -> uat"
+          fi
+
+          if [[ "$ALLOWED" == "false" ]]; then
+            echo ""
+            echo "✗ BLOCKED: $SOURCE -> $TARGET"
+            echo ""
+            echo "Allowed branch flows:"
+            echo "  • develop -> uat"
+            echo "  • uat -> main"
+            echo "  • main -> develop"
+            echo "  • feature/* -> develop"
+            echo "  • hotfix/* -> main"
+            echo "  • hotfix/* -> uat"
+            exit 1
+          fi
+
+          echo ""
+          echo "Branch flow check passed!"
