@@ -44,6 +44,36 @@ jobs:
             echo "✓ Allowed: feature/* -> develop"
           fi
 
+          # Docs branches -> develop
+          if [[ "$TARGET" == "develop" && "$SOURCE" == docs/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: docs/* -> develop"
+          fi
+
+          # Fix branches -> develop
+          if [[ "$TARGET" == "develop" && "$SOURCE" == fix/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: fix/* -> develop"
+          fi
+
+          # Refactor branches -> develop
+          if [[ "$TARGET" == "develop" && "$SOURCE" == refactor/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: refactor/* -> develop"
+          fi
+
+          # Chore branches -> develop
+          if [[ "$TARGET" == "develop" && "$SOURCE" == chore/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: chore/* -> develop"
+          fi
+
+          # Test branches -> develop
+          if [[ "$TARGET" == "develop" && "$SOURCE" == test/* ]]; then
+            ALLOWED=true
+            echo "✓ Allowed: test/* -> develop"
+          fi
+
           # Hotfix branches -> main (emergencies)
           if [[ "$TARGET" == "main" && "$SOURCE" == hotfix/* ]]; then
             ALLOWED=true
@@ -61,10 +91,10 @@ jobs:
             echo "✗ BLOCKED: $SOURCE -> $TARGET"
             echo ""
             echo "Allowed branch flows:"
+            echo "  • feature/*, fix/*, docs/*, refactor/*, chore/*, test/* -> develop"
             echo "  • develop -> uat"
             echo "  • uat -> main"
             echo "  • main -> develop"
-            echo "  • feature/* -> develop"
             echo "  • hotfix/* -> main"
             echo "  • hotfix/* -> uat"
             exit 1
