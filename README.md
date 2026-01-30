@@ -11,10 +11,10 @@ This repository contains organization-wide GitHub configurations and reusable wo
 Enforces the following merge flow across all repositories:
 
 ```
-feature/* ──► develop ──► uat ──► main
-                 ▲                  │
-                 └──────────────────┘
-                    (sync back)
+feature/*, fix/*, docs/*, refactor/*, chore/*, test/* ──► develop ──► uat ──► main
+                                                             ▲                  │
+                                                             └──────────────────┘
+                                                                (sync back)
 
 hotfix/* ──► main (emergencies)
 hotfix/* ──► uat (testing)
@@ -24,12 +24,19 @@ hotfix/* ──► uat (testing)
 
 | Source | Target | Description |
 |--------|--------|-------------|
+| `feature/*` | `develop` | New features |
+| `fix/*` | `develop` | Bug fixes |
+| `docs/*` | `develop` | Documentation changes |
+| `refactor/*` | `develop` | Code refactoring |
+| `chore/*` | `develop` | Maintenance tasks |
+| `test/*` | `develop` | Test additions/changes |
 | `develop` | `uat` | Regular promotion to UAT |
 | `uat` | `main` | Release to production |
 | `main` | `develop` | Sync production back to develop |
-| `feature/*` | `develop` | Feature branch merge |
 | `hotfix/*` | `main` | Emergency production fix |
 | `hotfix/*` | `uat` | Test hotfix in UAT |
+
+Branch prefixes align with [Conventional Commits](https://www.conventionalcommits.org/) types.
 
 #### Usage
 
